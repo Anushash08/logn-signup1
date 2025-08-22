@@ -1,0 +1,188 @@
+import React, { useState } from "react";
+import backgroundImage from "./assets/signup-bg.jpg"; // Place your image in src/assets/
+
+function Signup() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("Approve");
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    let newErrors = {};
+    if (!name) newErrors.name = "Name is required";
+    if (!email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Invalid email format";
+    }
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+    if (!confirmPassword) {
+      newErrors.confirmPassword = "Confirm password is required";
+    } else if (confirmPassword !== password) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validate()) {
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      users.push({ name, email, password, role });
+      localStorage.setItem("users", JSON.stringify(users));
+      alert("Signup Successful!");
+      window.location.href = "/login";
+    }
+  };
+
+  return (
+    <div
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "20px",
+      }}
+    >
+      <div
+        style={{
+          background: "rgba(255, 255, 255, 0.95)",
+          padding: "40px",
+          borderRadius: "16px",
+          boxShadow: "0 8px 25px rgba(0,0,0,0.3)",
+          width: "380px",
+          backdropFilter: "blur(10px)",
+        }}
+      >
+        <h2
+          style={{
+            textAlign: "center",
+            marginBottom: "25px",
+            color: "#2575fc",
+            fontSize: "26px",
+            fontWeight: "bold",
+          }}
+        >
+          Create Your Account
+        </h2>
+
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Full Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginBottom: "12px",
+              borderRadius: "8px",
+              border: "1px solid #ddd",
+            }}
+          />
+          {errors.name && <p style={{ color: "red" }}>{errors.name}</p>}
+
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginBottom: "12px",
+              borderRadius: "8px",
+              border: "1px solid #ddd",
+            }}
+          />
+          {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginBottom: "12px",
+              borderRadius: "8px",
+              border: "1px solid #ddd",
+            }}
+          />
+          {errors.password && <p style={{ color: "red" }}>{errors.password}</p>}
+
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginBottom: "12px",
+              borderRadius: "8px",
+              border: "1px solid #ddd",
+            }}
+          />
+          {errors.confirmPassword && (
+            <p style={{ color: "red" }}>{errors.confirmPassword}</p>
+          )}
+
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginBottom: "18px",
+              borderRadius: "8px",
+              border: "1px solid #ddd",
+            }}
+          >
+            <option value="Approve">Approve</option>
+            <option value="Create">Create</option>
+            <option value="Manage">Manage</option>
+          </select>
+
+          <button
+            type="submit"
+            style={{
+              width: "100%",
+              padding: "12px",
+              background: "linear-gradient(135deg, #6a11cb, #2575fc)",
+              color: "#fff",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: "16px",
+              fontWeight: "bold",
+              cursor: "pointer",
+              transition: "0.3s",
+            }}
+            onMouseOver={(e) => (e.target.style.opacity = "0.9")}
+            onMouseOut={(e) => (e.target.style.opacity = "1")}
+          >
+            Sign Up
+          </button>
+        </form>
+
+        <p style={{ textAlign: "center", marginTop: "18px" }}>
+          Already have an account? <a href="/login">Login</a>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default Signup;
