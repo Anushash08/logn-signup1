@@ -1,0 +1,106 @@
+import React, { useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import logo from "../assets/logo.png";   // Company logo
+import bgImage from "../assets/bg.jpg";  // Background image
+
+function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    let newErrors = {};
+    if (!email) newErrors.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = "Invalid email format";
+
+    if (!password) newErrors.password = "Password is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validate()) {
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const user = users.find((u) => u.email === email && u.password === password);
+
+      if (user) {
+        if (user.role === "Approve") {
+          alert("Login Successful! Redirecting to Approve Page");
+          window.location.href = "/approve";
+        } else {
+          alert(`Access Denied! Only Approve users can login here. Your role: ${user.role}`);
+        }
+      } else {
+        alert("Invalid Credentials");
+      }
+    }
+  };
+
+  return (
+    <div
+      className="d-flex justify-content-center align-items-center vh-100"
+      style={{
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div
+        className="card p-4 text-white shadow-lg"
+        style={{
+          width: "400px",
+          borderRadius: "15px",
+          background: "rgba(0, 0, 0, 0.6)",
+          backdropFilter: "blur(10px)",
+          border: "1px solid rgba(255, 255, 255, 0.3)",
+        }}
+      >
+        {/* Logo */}
+        <div className="text-center mb-3">
+          <img src={logo} alt="Company Logo" style={{ width: "100px", borderRadius: "8px" }} />
+        </div>
+
+        <h2 className="text-center mb-4 fw-bold text-light">Employee Login</h2>
+
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <input
+              type="email"
+              className="form-control bg-transparent text-white border-light"
+              placeholder="Enter email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            {errors.email && <small className="text-danger">{errors.email}</small>}
+          </div>
+
+          <div className="mb-3">
+            <input
+              type="password"
+              className="form-control bg-transparent text-white border-light"
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            {errors.password && <small className="text-danger">{errors.password}</small>}
+          </div>
+
+          <button type="submit" className="btn btn-primary w-100 rounded-pill fw-bold">
+            Login
+          </button>
+        </form>
+
+        <p className="text-center mt-3 text-light">
+          Don’t have an account?{" "}
+          <a href="/signup" className="fw-bold text-warning text-decoration-none">
+            Sign Up
+          </a>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default Login;
